@@ -5,7 +5,6 @@ const int HAUTEUR = 1000;
 const int H = 30;
 const int L = 50;
 
-
 SDL_Renderer* rendu;
 SDL_Window* win;
 TTF_Font* font;
