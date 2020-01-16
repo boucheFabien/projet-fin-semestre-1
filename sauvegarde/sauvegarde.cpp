@@ -1,7 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<SDL.h>
-#include<SDL_ttf.h>
+#include<SDL_ttf.h> 
 #include <string.h>
 #include"structures.h"
 #include"config_sdl.h"
@@ -13,16 +13,20 @@ int* chemin;
 int* chemin_save;
 SDL_Rect Jouer, Editer, Quitter, Save01, Save02, Save03, Save04, Slot01, Slot02, Slot03, Slot04, New, Load, MenuB, GraphB;
 
+
 int initSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
 		return 1;
 	}
 
+
 	TTF_Init();
 
 	font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 100);
 	bouton_menu_font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 50);
+	petite_font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
+
 
 	win = SDL_CreateWindow("LDVELH",
 		SDL_WINDOWPOS_CENTERED,
@@ -41,14 +45,19 @@ int initSDL() {
 }
 
 void destroySDL() {
+
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	TTF_CloseFont(font);
+	TTF_CloseFont(bouton_menu_font);
+	TTF_CloseFont(petite_font);
 	TTF_Quit();
 	SDL_Quit();
+
 }
 
 void afficherMenu() {
+
 	SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
 	SDL_RenderClear(rendu);
 
@@ -80,15 +89,18 @@ void afficherMenu() {
 	SDL_RenderDrawRect(rendu, &Quitter);
 	SDL_DestroyTexture(texture_quitter);
 	SDL_RenderPresent(rendu);
+
 }
 
 void importer() {
+
 	int nb_article, nb_liens;
 	char tmp[5000];
 
 	ifstream entree("testExport.lb", ios::in);
 	if (!entree)
 		cout << "Probleme d'ouverture" << endl;
+
 
 	entree.getline(tmp, 4);			//nb article
 	NBARTICLE = atoi(tmp);
@@ -119,12 +131,16 @@ void importer() {
 			entree.getline(tmp, 1000);	//texte destination
 			tabarticle[i].tLiens[j].texte = new char[1000];
 			strcpy_s(tabarticle[i].tLiens[j].texte, 1000, tmp);
+
 		}
+
+
 	}
 
 	entree.close();
 
 	chemin = new int[nb_chemin];
+
 }
 
 void save_chemin(Article a) {
@@ -235,6 +251,7 @@ int import_save(int num_partie) {
 }
 
 int change_texte(Article& texte) {
+
 	int longeur = strlen(texte.texte);
 
 	int limite = 150;
@@ -242,6 +259,7 @@ int change_texte(Article& texte) {
 	int curseur = limite;
 
 	while (curseur < longeur) {
+
 		while (texte.texte[curseur] != ' ' && (curseur < longeur)) {
 			curseur++;
 		}
@@ -258,15 +276,20 @@ int change_texte(Article& texte) {
 }
 
 void enlèvenul(Article& texte) {
+
 	int longeur = strlen(texte.texte);
 
 	for (int i = 0; i < longeur; i++) {
+
 		if (texte.texte[i] == '#')
 			texte.texte[i] = ' ';
+
 	}
+
 }
 
 void affiche_texte(int id) {
+
 	SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
 	SDL_RenderClear(rendu);
 
@@ -285,6 +308,7 @@ void affiche_texte(int id) {
 	}
 
 	while (curseur < longeur) {
+
 		for (int i = 0; i < 1000; i++) {
 			afficher[i] = ' ';
 		}
@@ -294,6 +318,8 @@ void affiche_texte(int id) {
 		int i = curseur;
 
 		while (tabarticle[id].texte[i] != '#') {
+
+
 			afficher[j] = tabarticle[id].texte[i];
 
 			j++;
@@ -322,18 +348,24 @@ void affiche_texte(int id) {
 
 		SDL_RenderCopy(rendu, texture, NULL, &positionTexte);
 
+
 		emplacement = emplacement + 40;
 		SDL_DestroyTexture(texture);
 		TTF_CloseFont(font_temp);
 	}
 
+
+
 	//on met à jour le rendu
 	SDL_RenderPresent(rendu);
 
 	enlèvenul(tabarticle[id]);
+
 }
 
 void affiche_liens(Article Choix) {
+
+
 	TTF_Init();
 	TTF_Font* font_temp = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 19);
 
@@ -355,6 +387,7 @@ void affiche_liens(Article Choix) {
 }
 
 void menu_graph() {
+
 	SDL_Rect Historique;
 	SDL_Color noir = { 0, 0, 0 };
 	SDL_Texture* texture_histo = loadText(rendu, "Historique", noir, font);
@@ -432,6 +465,7 @@ void menu_graph() {
 			}
 		}
 	}
+
 }
 
 void jouer() {
@@ -459,10 +493,12 @@ void jouer() {
 		SDL_RenderPresent(rendu);
 
 		if (tabarticle[CURRENT_ARTICLE].nbLiens != 0) {
+
 			bool continuer = true;
 			SDL_Event event;
 
 			while (continuer) {
+
 				SDL_WaitEvent(&event);
 
 				switch (event.type)
@@ -507,7 +543,9 @@ void jouer() {
 							}
 						}
 					}
+
 				}
+
 			}
 		}
 		else {
@@ -888,7 +926,7 @@ void menu() {
 					SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
 					SDL_RenderClear(rendu);
 					continuer_menu = false;
-					//Editer
+					menu_edition();
 					break;
 				}
 				if ((event_menu.button.x > Quitter.x&& event_menu.button.x < Quitter.x + Quitter.w) && (event_menu.button.y > Quitter.y&& event_menu.button.y < Quitter.y + Quitter.h)) {
@@ -909,6 +947,7 @@ void menu() {
 }
 
 Noeud faire_noeud(Article* a, int x, int y) {
+
 	Noeud N;
 	N.article = a;
 	N.x = /*en fonction de la distance au début*/x;
@@ -918,6 +957,7 @@ Noeud faire_noeud(Article* a, int x, int y) {
 }
 
 Arete faire_Arrete(Noeud Origine, Noeud Destination) {
+
 	Arete A;
 	A.destination = &Destination;
 	A.origine = &Origine;
@@ -926,6 +966,7 @@ Arete faire_Arrete(Noeud Origine, Noeud Destination) {
 }
 
 void dessine_noeud(Noeud N) {
+
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 20);
 
@@ -948,6 +989,7 @@ void dessine_noeud(Noeud N) {
 }
 
 void dessine_arrete(Arete a) {
+
 	dessine_noeud(*(a.destination));
 	dessine_noeud(*(a.origine)); //peut être supprimé
 	SDL_RenderDrawLine(rendu, a.destination->x, a.destination->y + (H / 2), a.origine->x + L, (a.origine)->y + (H / 2));
@@ -955,6 +997,7 @@ void dessine_arrete(Arete a) {
 }
 
 void dessine_graph() {
+
 	int cmp = 0;
 	int cmp2 = 0;
 
@@ -1014,57 +1057,76 @@ void dessine_graph() {
 			}
 		}
 	}
+
 }
 
 void dessine_graph_complet() {
+
 	Noeud tab[350];
 
 	for (int h = 0; h < 350; h++) {
+
 		tab[h] = faire_noeud(tabarticle + h, 0, 0);
+
 	}
 
 	int compt = 0;
 
 	for (int j = 0; j < 14; j++) {
 		for (int i = 0; i < 25; i++) {
+
 			tab[compt].x = 68 * i;
 			tab[compt].y = 68 * j;
 
 			//tab[compt].article->id = tabarticle[compt].id;
 			compt++;
+
 		}
 	}
 
 	for (int k = 0; k < 350; k++) {
+
 		for (int q = 0; q < tabarticle[k].nbLiens; q++) {
+
 			dessine_arrete(faire_Arrete(tab[k], tab[(tabarticle[k].tLiens[q].destination) - 1]));
 			//dessine_arrete(faire_Arrete(faire_noeud(tabarticle[chemin[i]], 100 * (i + 1), HAUTEUR / 2), faire_noeud(tabarticle[chemin[i + 1]], 100 * (i + 2), HAUTEUR / 2)));
+
 		}
+
 	}
 
 	compt = 0;
 
 	for (int j = 0; j < 14; j++) {
 		for (int i = 0; i < 25; i++) {
+
 			dessine_noeud(tab[compt]);
 
 			//tab[compt].article->id = tabarticle[compt].id;
 			compt++;
+
 		}
 	}
+
 }
 
 void exportHTML() {
+
+
 	char tmp[21];
 
 	//system("mkdir \\iutbg-smbetu.univ-lyon1.fr\homes\Documents\Init algo\Semaine spé\LDVELH\LDVELH\Article"); //création dossier Article
+
 
 	for (int i = 1; i <= NBARTICLE; i++)						//création et remplissage des articles dans le dossier article
 	{
 		snprintf(tmp, sizeof(tmp), "Article/page%d", i);		//concatenation Article/pagei
 		strcat_s(tmp, ".html");									//concatenation de Article/pagei.html
 
+
+
 		ofstream pages(tmp);									//création de i pages (pagei.html)
+
 
 		//Début HTML sans CSS(pour l'instant) Article
 		pages << "<!Doctype html>" << endl;
@@ -1094,7 +1156,9 @@ void exportHTML() {
 			pages << "</div>" << endl;
 			pages << "</body>" << endl;
 			pages << "</html>" << endl;
+
 		}
+
 
 		pages.close();  //fermeture de l'écriture
 
@@ -1102,104 +1166,173 @@ void exportHTML() {
 	}
 }
 
-void reception_touche_atoz() {
-	bool continuer = true;
-	SDL_Event event;
-	while (continuer)
-	{
+void saisie_texte(SDL_Rect rectangle) {
+
+	SDL_Rect affiche_saisie;
+	affiche_saisie.x = rectangle.x + 5;
+	affiche_saisie.y = rectangle.y + 3;
+	SDL_Color blanc = { 255, 255, 255 };
+	int taille = 1;
+	char* ecriture;
+	ecriture = new char[taille];
+	bool continuer_menu = true, majuscule = false;
+	while (continuer_menu) {
+		SDL_Event event;
 		SDL_WaitEvent(&event);
+
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			continuer = false;
+			for (int i = 0; i < NBARTICLE; i++) {
+				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
+					delete[] tabarticle[i].tLiens[j].texte;
+				}
+				delete[] tabarticle[i].tLiens;
+			}
+			delete[] tabarticle;
+			destroySDL();
 			break;
-		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_a) {
-			}
-			if (event.key.keysym.sym == SDLK_b) {
-			}
-			if (event.key.keysym.sym == SDLK_c) {
-			}
-			if (event.key.keysym.sym == SDLK_d) {
-			}
-			if (event.key.keysym.sym == SDLK_e) {
-			}
-			if (event.key.keysym.sym == SDLK_f) {
-			}
-			if (event.key.keysym.sym == SDLK_g) {
-			}
-			if (event.key.keysym.sym == SDLK_h) {
-			}
-			if (event.key.keysym.sym == SDLK_i) {
-			}
-			if (event.key.keysym.sym == SDLK_j) {
-			}
-			if (event.key.keysym.sym == SDLK_k) {
-			}
-			if (event.key.keysym.sym == SDLK_l) {
-			}
-			if (event.key.keysym.sym == SDLK_m) {
-			}
-			if (event.key.keysym.sym == SDLK_n) {
-			}
-			if (event.key.keysym.sym == SDLK_o) {
-			}
-			if (event.key.keysym.sym == SDLK_p) {
-			}
-			if (event.key.keysym.sym == SDLK_q) {
-			}
-			if (event.key.keysym.sym == SDLK_r) {
-			}
-			if (event.key.keysym.sym == SDLK_s) {
-			}
-			if (event.key.keysym.sym == SDLK_t) {
-			}
-			if (event.key.keysym.sym == SDLK_u) {
-			}
-			if (event.key.keysym.sym == SDLK_v) {
-			}
-			if (event.key.keysym.sym == SDLK_w) {
-			}
-			if (event.key.keysym.sym == SDLK_x) {
-			}
-			if (event.key.keysym.sym == SDLK_y) {
-			}
-			if (event.key.keysym.sym == SDLK_z) {
-			}
-			if (event.key.keysym.sym == SDLK_KP_PERIOD || SDLK_PERIOD) { //"."
-			}
-			if (event.key.keysym.sym == SDLK_COLON) { //":"
-			}
-			if (event.key.keysym.sym == SDLK_SEMICOLON) { //";"
-			}
-			if (event.key.keysym.sym == SDLK_QUESTION) { //"?"
-			}
-			if (event.key.keysym.sym == SDLK_COMMA) { //","
-			}
-			if (event.key.keysym.sym == SDLK_RIGHTPAREN) { //")"
-			}
-			if (event.key.keysym.sym == SDLK_LEFTPAREN) { //"("
-			}
-			if (event.key.keysym.sym == SDLK_QUOTEDBL) { //" " "
-			}
-			if (event.key.keysym.sym == SDLK_EXCLAIM) { //"!"
-			}
-			if (event.key.keysym.sym == SDLK_SPACE) {
-			}
-			if (event.key.keysym.sym == SDLK_RETURN) {
-			}
 
 			break;
+
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == 1073741881) {
+				if (!majuscule) {
+					majuscule = true;
+				}
+				else {
+					majuscule = false;
+				}
+				break;
+			}
+			else if (event.key.keysym.sym == 8) {
+				taille--;
+				char* redim_ecriture = ecriture;
+				ecriture = new char[taille];
+				for (int i = 0; i < taille - 1; i++) {
+					ecriture[i] = redim_ecriture[i];
+				}
+				delete redim_ecriture;
+				ecriture[taille - 1] = '\0';
+				cout << ecriture;
+				SDL_RenderFillRect(rendu, &rectangle);
+				SDL_Texture* texture_affiche_saisie = loadText(rendu, ecriture, blanc, petite_font);
+				SDL_QueryTexture(texture_affiche_saisie, NULL, NULL, &affiche_saisie.w, &affiche_saisie.h);
+				SDL_RenderCopy(rendu, texture_affiche_saisie, NULL, &affiche_saisie);
+				SDL_RenderPresent(rendu);
+			}
+			else {
+				taille++;
+				char* redim_ecriture = ecriture;
+				ecriture = new char[taille];
+				for (int i = 0; i < taille - 2; i++) {
+					ecriture[i] = redim_ecriture[i];
+				}
+				delete redim_ecriture;
+				if (majuscule) {
+					ecriture[taille - 2] = event.key.keysym.sym - 32;
+				}
+				else {
+					ecriture[taille - 2] = event.key.keysym.sym;
+				}
+			}
+			ecriture[taille - 1] = '\0';
+			cout << ecriture;
+			SDL_Texture* texture_affiche_saisie = loadText(rendu, ecriture, blanc, petite_font);
+			SDL_QueryTexture(texture_affiche_saisie, NULL, NULL, &affiche_saisie.w, &affiche_saisie.h);
+			SDL_RenderCopy(rendu, texture_affiche_saisie, NULL, &affiche_saisie);
+			SDL_RenderPresent(rendu);
+			break;
+		}
+	}
+
+}
+
+void menu_edition() {
+
+	SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+	SDL_RenderClear(rendu);
+	TTF_Font* font_temp = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
+
+	SDL_Rect saisir_titre;
+	SDL_Color noir = { 0, 0, 0 };
+	SDL_Texture* texture_saisir_titre = loadText(rendu, "Saisissez le titre de votre livre :", noir, font_temp);
+	SDL_QueryTexture(texture_saisir_titre, NULL, NULL, &saisir_titre.w, &saisir_titre.h);
+	saisir_titre.x = LARGEUR / 2 - saisir_titre.w / 2;
+	saisir_titre.y = HAUTEUR / 4 - saisir_titre.h / 2;
+	SDL_RenderCopy(rendu, texture_saisir_titre, NULL, &saisir_titre);
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &saisir_titre);
+	SDL_DestroyTexture(texture_saisir_titre);
+
+	SDL_Rect champ_saisir_titre;
+	champ_saisir_titre.x = saisir_titre.x;
+	champ_saisir_titre.y = saisir_titre.y + saisir_titre.h + 10;
+	champ_saisir_titre.w = saisir_titre.w;
+	champ_saisir_titre.h = 25 + 6;
+
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderFillRect(rendu, &champ_saisir_titre);
+
+	SDL_RenderPresent(rendu);
+	TTF_CloseFont(font_temp);
+
+	bool continuer_menu = true, majuscule = false;
+	while (continuer_menu) {
+		SDL_Event event;
+		SDL_WaitEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			for (int i = 0; i < NBARTICLE; i++) {
+				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
+					delete[] tabarticle[i].tLiens[j].texte;
+				}
+				delete[] tabarticle[i].tLiens;
+			}
+			delete[] tabarticle;
+			destroySDL();
+			break;
+
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				if ((event.button.x > champ_saisir_titre.x&& event.button.x < champ_saisir_titre.x + champ_saisir_titre.w) && (event.button.y > champ_saisir_titre.y&& event.button.y < champ_saisir_titre.y + champ_saisir_titre.h)) {
+					continuer_menu = false;
+					saisie_texte(champ_saisir_titre);
+					break;
+				}
+			}
 		}
 	}
 }
 
+//void saisie_titre() {
+//	
+//}
+//
+//void saisie_article() {
+//
+//}
+
 int main(int argn, char* argv[]) {
+
 	importer();
-	/*exportHTML();*/
+	//exportHTML();
 
 	initSDL();
+	//edition();
 	afficherMenu();
 	menu();
+
+	/*char* a = new char[6];
+	for (int i = 0; i < 5; i++) {
+		a[i] = 'b';
+	}
+	a[5] = '\0';
+	cout << a << endl;*/
+
 	return 0;
 }

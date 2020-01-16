@@ -5,10 +5,12 @@ const int HAUTEUR = 1000;
 const int H = 30;
 const int L = 50;
 
+
 SDL_Renderer* rendu;
 SDL_Window* win;
 TTF_Font* font;
 TTF_Font* bouton_menu_font;
+TTF_Font* petite_font;
 
 typedef struct {
 	char* texte = NULL; //texte possible sur le lien
@@ -38,7 +40,6 @@ int initSDL();
 void destroySDL();
 void afficherMenu();
 void importer();
-void chemin_utiliser(Article a);
 void save_chemin(Article a);
 int import_save(int num_partie);
 int change_texte(Article& texte);
@@ -59,3 +60,5 @@ void dessine_graph();
 void menu_graph();
 void dessine_graph_complet();
 void exportHTML();
+void saisie_texte(SDL_Rect rectangle);
+void menu_edition();
