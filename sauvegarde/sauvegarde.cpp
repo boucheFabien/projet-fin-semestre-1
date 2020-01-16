@@ -75,8 +75,6 @@ void Bmenu() {
 	MenuB.y = HAUTEUR - MenuB.h - 30;
 	SDL_RenderCopy(rendu, texture_menu, NULL, &MenuB);
 	SDL_DestroyTexture(texture_menu);
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &MenuB);
 }
 
 void Bgraph() {
@@ -87,8 +85,6 @@ void Bgraph() {
 	GraphB.y = HAUTEUR - GraphB.h - MenuB.h - 40;
 	SDL_RenderCopy(rendu, texture_graph, NULL, &GraphB);
 	SDL_DestroyTexture(texture_graph);
-	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
-	SDL_RenderDrawRect(rendu, &GraphB);
 	SDL_RenderPresent(rendu);
 }
 
