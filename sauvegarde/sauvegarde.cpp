@@ -5,6 +5,8 @@
 #include <string.h>
 #include"structures.h"
 #include"config_sdl.h"
+#include<time.h>
+
 using namespace std;
 
 Article* tabarticle;
@@ -645,71 +647,150 @@ void jouer() {
 			Bmenu();
 			Bgraph();
 			if (tabarticle[CURRENT_ARTICLE].id == 350) {
-				SDL_Rect Perdu;
-				Perdu.x = LARGEUR / 3;
-				Perdu.y = HAUTEUR / 2 - 100;
-				SDL_Color Rouge = { 255, 255, 0 };
-				SDL_Texture* texture_perdu = loadText(rendu, "GAGNER !", Rouge, font);
-				SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
-				SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
-				SDL_DestroyTexture(texture_perdu);
-				SDL_RenderPresent(rendu);
-				CURRENT_ARTICLE = -1;
-				SDL_Delay(2000);
-			}
-			else {
-				SDL_Rect Perdu;
-				Perdu.x = LARGEUR / 3;
-				Perdu.y = HAUTEUR / 2 - 100;
-				SDL_Color Rouge = { 255, 0, 0 };
-				SDL_Texture* texture_perdu = loadText(rendu, "Perdu !", Rouge, font);
-				SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
-				SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
-				SDL_DestroyTexture(texture_perdu);
-				SDL_RenderPresent(rendu);
-				CURRENT_ARTICLE = -1;
-				SDL_Delay(2000);
-			}
-			bool continuer = true;
-			SDL_Event event;
 
-			while (continuer) {
-				SDL_WaitEvent(&event);
 
-				switch (event.type)
+				typedef struct
 				{
-				case SDL_QUIT:
-					continuer = false;
-					destroySDL();
-					break;
+					SDL_Texture* texture = NULL;
+					SDL_Rect posIm;
+				}image;
 
-				case SDL_MOUSEBUTTONDOWN:
-					if (event.button.button == SDL_BUTTON_LEFT) {
-						if (event.button.x > MenuB.x&& event.button.x<MenuB.x + MenuB.w && event.button.y>MenuB.y&& event.button.y < MenuB.y + MenuB.h)
-						{
-							SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
-							SDL_RenderClear(rendu);
-							afficherMenu();
-							menu();
-							break;
-						}
-						if (event.button.x > GraphB.x&& event.button.x<GraphB.x + GraphB.w && event.button.y>GraphB.y&& event.button.y < GraphB.y + GraphB.h)
-						{
-							SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
-							SDL_RenderClear(rendu);
-							menu_graph();
-							break;
-						}
-						for (int i = 0; i < tabarticle[CURRENT_ARTICLE].nbLiens; i++) {
-							if (event.button.x > 50 && event.button.x < LARGEUR - 200 && event.button.y > HAUTEUR - 100 && event.button.y < (HAUTEUR - 100) + 20 * i + 20) {
-								CURRENT_ARTICLE = tabarticle[CURRENT_ARTICLE].tLiens[i].destination - 1;
-								save_chemin(tabarticle[CURRENT_ARTICLE]);
-								export_save(CURRENT_ARTICLE, ACTUAL_SAVE);
-								continuer = false;
+				image death[3];
+				SDL_RenderPresent(rendu);
+
+				//création des affichages des images    
+				death[0].texture = loadImage(rendu, "tresor1.png", 200, -1, -1, -1);
+				death[1].texture = loadImage(rendu, "tresor2.png", 200, -1, -1, -1);
+				death[2].texture = loadImage(rendu, "tresor3.png", 200, -1, -1, -1);
+
+				bool continuer = true;
+				SDL_Event event;
+
+				while (continuer) {
+					SDL_WaitEvent(&event);
+
+					switch (event.type)
+					{
+					case SDL_QUIT:
+						continuer = false;
+						destroySDL();
+						break;
+
+					case SDL_MOUSEBUTTONDOWN:
+						if (event.button.button == SDL_BUTTON_LEFT) {
+							if (event.button.x > MenuB.x&& event.button.x<MenuB.x + MenuB.w && event.button.y>MenuB.y&& event.button.y < MenuB.y + MenuB.h)
+							{
+								SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+								SDL_RenderClear(rendu);
+								afficherMenu();
+								menu();
+								break;
+							}
+							if (event.button.x > GraphB.x&& event.button.x<GraphB.x + GraphB.w && event.button.y>GraphB.y&& event.button.y < GraphB.y + GraphB.h)
+							{
+								SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+								SDL_RenderClear(rendu);
+								menu_graph();
 								break;
 							}
 						}
 					}
+					for (int i = 0; i < 3; i++)
+					{
+						fond_ecran();
+						Bmenu();
+						Bgraph();
+						SDL_Rect Perdu;
+						Perdu.x = LARGEUR / 3;
+						Perdu.y = HAUTEUR / 2 - 100;
+						SDL_Color Rouge = { 255, 255, 0 };
+						SDL_Texture* texture_perdu = loadText(rendu, "GAGNER !", Rouge, font);
+						SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
+						SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
+						SDL_DestroyTexture(texture_perdu);
+						SDL_RenderPresent(rendu);
+						CURRENT_ARTICLE = -1;
+						death[i].posIm.x = 165;
+						death[i].posIm.y = 100;
+						SDL_QueryTexture(death[i].texture, NULL, NULL, &death[i].posIm.w, &death[i].posIm.h);
+						SDL_RenderCopy(rendu, death[i].texture, NULL, &death[i].posIm);
+						SDL_RenderPresent(rendu);
+						SDL_Delay(200);
+					}
+
+				}
+			}
+			else {
+
+				typedef struct
+				{
+					SDL_Texture* texture = NULL;
+					SDL_Rect posIm;
+				}image;
+
+				image death[3];
+				SDL_RenderPresent(rendu);
+
+				//création des affichages des images    
+				death[0].texture = loadImage(rendu, "r1.png", 200, -1, -1, -1);
+				death[1].texture = loadImage(rendu, "r2.png", 200, -1, -1, -1);
+				death[2].texture = loadImage(rendu, "r3.png", 200, -1, -1, -1);
+
+				bool continuer = true;
+				SDL_Event event;
+
+				while (continuer) {
+					SDL_WaitEvent(&event);
+
+					switch (event.type)
+					{
+					case SDL_QUIT:
+						continuer = false;
+						destroySDL();
+						break;
+
+					case SDL_MOUSEBUTTONDOWN:
+						if (event.button.button == SDL_BUTTON_LEFT) {
+							if (event.button.x > MenuB.x&& event.button.x<MenuB.x + MenuB.w && event.button.y>MenuB.y&& event.button.y < MenuB.y + MenuB.h)
+							{
+								SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+								SDL_RenderClear(rendu);
+								afficherMenu();
+								menu();
+								break;
+							}
+							if (event.button.x > GraphB.x&& event.button.x<GraphB.x + GraphB.w && event.button.y>GraphB.y&& event.button.y < GraphB.y + GraphB.h)
+							{
+								SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+								SDL_RenderClear(rendu);
+								menu_graph();
+								break;
+							}
+						}
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						fond_ecran();
+						Bmenu();
+						Bgraph();
+						SDL_Rect Perdu;
+						Perdu.x = LARGEUR / 3;
+						Perdu.y = HAUTEUR / 2 - 100;
+						SDL_Color Rouge = { 255, 0, 0 };
+						SDL_Texture* texture_perdu = loadText(rendu, "Perdu !", Rouge, font);
+						SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
+						SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
+						SDL_DestroyTexture(texture_perdu);
+						SDL_RenderPresent(rendu);
+						CURRENT_ARTICLE = -1;
+						death[i].posIm.x = 165;
+						death[i].posIm.y = 100;
+						SDL_QueryTexture(death[i].texture, NULL, NULL, &death[i].posIm.w, &death[i].posIm.h);
+						SDL_RenderCopy(rendu, death[i].texture, NULL, &death[i].posIm);
+						SDL_RenderPresent(rendu);
+						SDL_Delay(100);
+					}
+
 				}
 			}
 		}
@@ -1152,37 +1233,57 @@ void tabbieny() {
 	}
 }
 
+
 void dessine_bien() {
+	/*SDL_Rect RetourJeu;
+	SDL_Color noir = { 0, 0, 0 };
+	SDL_Texture* texture_retour = loadText(rendu, "Retour graph", noir, font);
+	SDL_QueryTexture(texture_retour, NULL, NULL, &RetourJeu.w, &RetourJeu.h);
+	RetourJeu.x = 0;
+	RetourJeu.y = 0;
+	SDL_RenderCopy(rendu, texture_retour, NULL, &RetourJeu);
+	SDL_SetRenderDrawColor(rendu, 0, 0, 0, 255);
+	SDL_RenderDrawRect(rendu, &RetourJeu);
+	SDL_DestroyTexture(texture_retour);*/
+
 	fond_ecran();
 	Bretour();
+
+	SDL_RenderPresent(rendu);
+
+
 	tabbienx();
 	tabbieny();
 
-	Noeud Tabchiant[350];
+	Noeud Tabchiant[1000];
 
 	int i = 0;
 	int compt = 0;
 
-	while (i < 350) {
+	while (i < NBARTICLE) {
+
 		for (int j = 0; j < tabjoliy[compt]; j++) {
+
 			Tabchiant[i].x = tabjolix[i];
 			Tabchiant[i].y = tabjoliy[i];
 			i++;
+
 		}
 
 		compt++;
+
 	}
 
-	for (int i = 0; i < 350; i++) {
-		cout << i + 1 << "\t" << tabjolix[i] << "\t" << tabjoliy[i] << endl;
-	}
+	for (int i = 0; i < NBARTICLE; i++) {
+		//for (int j = 0; j < tabjoliy[i]; j++) {
 
-	for (int i = 0; i < 350; i++) {
 		for (int j = Tabchiant[i].y; j > -Tabchiant[i].y; j = j - 2) {
 			dessine_mini_noeud(faire_noeud(NULL, ((Tabchiant[i].x) * 11) + 50, ((j) * 15) + HAUTEUR / 2));
 		}
+
+		//}
+
 	}
-	SDL_RenderPresent(rendu);
 
 	bool continuer_menu = true;
 	while (continuer_menu) {
@@ -1192,7 +1293,13 @@ void dessine_bien() {
 		switch (event_menu.type)
 		{
 		case SDL_QUIT:
-
+			for (int i = 0; i < NBARTICLE; i++) {
+				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
+					delete[] tabarticle[i].tLiens[j].texte;
+				}
+				delete[] tabarticle[i].tLiens;
+			}
+			delete[] tabarticle;
 			destroySDL();
 			break;
 
@@ -1202,13 +1309,15 @@ void dessine_bien() {
 					SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
 					SDL_RenderClear(rendu);
 					continuer_menu = false;
-					jouer();
+					menu_graph();
 					break;
 				}
 			}
 		}
 	}
+
 }
+
 
 void exportHTML() {
 	char tmp[21];
@@ -1662,9 +1771,10 @@ bool choix_autre_article() {
 }
 
 int main(int argn, char* argv[]) {
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	importer();
 	//exportHTML();
-
+	
 	initSDL();
 	//edition();
 	afficherMenu();
