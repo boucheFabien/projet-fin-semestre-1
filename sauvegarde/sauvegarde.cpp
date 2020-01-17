@@ -1,7 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<SDL.h>
-#include<SDL_ttf.h> 
+#include<SDL_ttf.h>
 #include <string.h>
 #include"structures.h"
 #include"config_sdl.h"
@@ -20,19 +20,16 @@ SDL_Rect Jouer, Editer, Quitter, Save01, Save02, Save03, Save04, Slot01, Slot02,
 SDL_Surface* graphimg = NULL, * menuimg = NULL, * fondimg = NULL, * returnimg = NULL, * play = NULL, * edit = NULL, * quit = NULL, * nouv = NULL, * ch = NULL, * Hist = NULL, * graph = NULL,
 * e1 = NULL, * e2 = NULL, * e3 = NULL, * e4 = NULL, * s1 = NULL, * s2 = NULL, * s3 = NULL, * s4 = NULL;
 
-
 int initSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cout << "Echec à l’ouverture";
 		return 1;
 	}
 
-
 	TTF_Init();
 
 	font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 100);
 	petite_font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
-
 
 	win = SDL_CreateWindow("LDVELH",
 		SDL_WINDOWPOS_CENTERED,
@@ -52,11 +49,11 @@ int initSDL() {
 }
 
 void destroySDL() {
-
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
+	TTF_CloseFont(bouton_menu_font);
+	TTF_CloseFont(petite_font);
 	TTF_CloseFont(font);
-
 }
 
 void fond_ecran() {
@@ -127,7 +124,6 @@ void Bedit() {
 	SDL_DestroyTexture(texture_editer);
 }
 
-
 void Bquit() {
 	quit = IMG_Load("boutonquit.png");
 	SDL_Texture* texture_quitter = SDL_CreateTextureFromSurface(rendu, quit);
@@ -193,7 +189,7 @@ void Be2() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, e2);
 	SDL_QueryTexture(texture1, NULL, NULL, &Slot02.w, &Slot02.h);
 	Slot02.x = LARGEUR / 2 - Slot02.w / 2;
-	Slot02.y = 2*HAUTEUR / 6 - Slot02.h / 2;
+	Slot02.y = 2 * HAUTEUR / 6 - Slot02.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Slot02);
 	SDL_DestroyTexture(texture1);
 }
@@ -203,7 +199,7 @@ void Be3() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, e3);
 	SDL_QueryTexture(texture1, NULL, NULL, &Slot03.w, &Slot03.h);
 	Slot03.x = LARGEUR / 2 - Slot03.w / 2;
-	Slot03.y = 3*HAUTEUR / 6 - Slot03.h / 2;
+	Slot03.y = 3 * HAUTEUR / 6 - Slot03.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Slot03);
 	SDL_DestroyTexture(texture1);
 }
@@ -213,7 +209,7 @@ void Be4() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, e4);
 	SDL_QueryTexture(texture1, NULL, NULL, &Slot04.w, &Slot04.h);
 	Slot04.x = LARGEUR / 2 - Slot04.w / 2;
-	Slot04.y = 4*HAUTEUR / 6 - Slot04.h / 2;
+	Slot04.y = 4 * HAUTEUR / 6 - Slot04.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Slot04);
 	SDL_DestroyTexture(texture1);
 }
@@ -233,7 +229,7 @@ void Bs2() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, s2);
 	SDL_QueryTexture(texture1, NULL, NULL, &Save02.w, &Save02.h);
 	Save02.x = LARGEUR / 2 - Save02.w / 2;
-	Save02.y = 2*HAUTEUR / 6 - Save02.h / 2;
+	Save02.y = 2 * HAUTEUR / 6 - Save02.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Save02);
 	SDL_DestroyTexture(texture1);
 }
@@ -243,7 +239,7 @@ void Bs3() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, s3);
 	SDL_QueryTexture(texture1, NULL, NULL, &Save03.w, &Save03.h);
 	Save03.x = LARGEUR / 2 - Save03.w / 2;
-	Save03.y = 3*HAUTEUR / 6 - Save03.h / 2;
+	Save03.y = 3 * HAUTEUR / 6 - Save03.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Save03);
 	SDL_DestroyTexture(texture1);
 }
@@ -253,13 +249,12 @@ void Bs4() {
 	SDL_Texture* texture1 = SDL_CreateTextureFromSurface(rendu, s4);
 	SDL_QueryTexture(texture1, NULL, NULL, &Save04.w, &Save04.h);
 	Save04.x = LARGEUR / 2 - Save04.w / 2;
-	Save04.y = 4*HAUTEUR / 6 - Save04.h / 2;
+	Save04.y = 4 * HAUTEUR / 6 - Save04.h / 2;
 	SDL_RenderCopy(rendu, texture1, NULL, &Save04);
 	SDL_DestroyTexture(texture1);
 }
 
 void afficherMenu() {
-
 	fond_ecran();
 
 	SDL_Color noir = { 0, 0, 0 };
@@ -270,18 +265,15 @@ void afficherMenu() {
 	Bquit();
 
 	SDL_RenderPresent(rendu);
-
 }
 
 void importer() {
-
 	int nb_article, nb_liens;
 	char tmp[5000];
 
 	ifstream entree("testExport.lb", ios::in);
 	if (!entree)
 		cout << "Probleme d'ouverture" << endl;
-
 
 	entree.getline(tmp, 4);			//nb article
 	NBARTICLE = atoi(tmp);
@@ -312,16 +304,12 @@ void importer() {
 			entree.getline(tmp, 1000);	//texte destination
 			tabarticle[i].tLiens[j].texte = new char[1000];
 			strcpy_s(tabarticle[i].tLiens[j].texte, 1000, tmp);
-
 		}
-
-
 	}
 
 	entree.close();
 
 	chemin = new int[nb_chemin];
-
 }
 
 void save_chemin(Article a) {
@@ -432,7 +420,6 @@ int import_save(int num_partie) {
 }
 
 int change_texte(Article& texte) {
-
 	int longeur = strlen(texte.texte);
 
 	int limite = 150;
@@ -440,7 +427,6 @@ int change_texte(Article& texte) {
 	int curseur = limite;
 
 	while (curseur < longeur) {
-
 		while (texte.texte[curseur] != ' ' && (curseur < longeur)) {
 			curseur++;
 		}
@@ -457,20 +443,15 @@ int change_texte(Article& texte) {
 }
 
 void enlèvenul(Article& texte) {
-
 	int longeur = strlen(texte.texte);
 
 	for (int i = 0; i < longeur; i++) {
-
 		if (texte.texte[i] == '#')
 			texte.texte[i] = ' ';
-
 	}
-
 }
 
 void affiche_texte(int id) {
-
 	fond_ecran();
 
 	int longeur = change_texte(tabarticle[id]);
@@ -488,7 +469,6 @@ void affiche_texte(int id) {
 	}
 
 	while (curseur < longeur) {
-
 		for (int i = 0; i < 1000; i++) {
 			afficher[i] = ' ';
 		}
@@ -498,8 +478,6 @@ void affiche_texte(int id) {
 		int i = curseur;
 
 		while (tabarticle[id].texte[i] != '#') {
-
-
 			afficher[j] = tabarticle[id].texte[i];
 
 			j++;
@@ -528,24 +506,18 @@ void affiche_texte(int id) {
 
 		SDL_RenderCopy(rendu, texture, NULL, &positionTexte);
 
-
 		emplacement = emplacement + 40;
 		SDL_DestroyTexture(texture);
 		TTF_CloseFont(font_temp);
 	}
 
-
-
 	//on met à jour le rendu
 	SDL_RenderPresent(rendu);
 
 	enlèvenul(tabarticle[id]);
-
 }
 
 void affiche_liens(Article Choix) {
-
-
 	TTF_Init();
 	TTF_Font* font_temp = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 19);
 
@@ -570,12 +542,9 @@ void menu_graph() {
 	fond_ecran();
 	Bretour();
 
-
 	Bchemin();
 
 	Bgraph2();
-
-	
 
 	SDL_RenderPresent(rendu);
 
@@ -587,13 +556,6 @@ void menu_graph() {
 		switch (event_menu.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
 			destroySDL();
 			break;
 
@@ -623,7 +585,6 @@ void menu_graph() {
 			}
 		}
 	}
-
 }
 
 void jouer() {
@@ -636,25 +597,15 @@ void jouer() {
 		Bgraph();
 
 		if (tabarticle[CURRENT_ARTICLE].nbLiens != 0) {
-
 			bool continuer = true;
 			SDL_Event event;
 
 			while (continuer) {
-
 				SDL_WaitEvent(&event);
 
 				switch (event.type)
 				{
 				case SDL_QUIT:
-					/*for (int i = 0; i < NBARTICLE; i++) {
-						for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-							delete[] tabarticle[i].tLiens[j].texte;
-						}
-						delete[] tabarticle[i].tLiens;
-					}
-					delete[] tabarticle;
-					delete[] chemin;*/
 					continuer = false;
 					destroySDL();
 					break;
@@ -686,17 +637,15 @@ void jouer() {
 							}
 						}
 					}
-
 				}
-
 			}
 		}
 		else {
 			fond_ecran();
 
 			SDL_Rect Perdu;
-			Perdu.x = 0;
-			Perdu.y = 0;
+			Perdu.x = LARGEUR / 3;
+			Perdu.y = HAUTEUR / 2 - 100;
 			SDL_Color Rouge = { 255, 0, 0 };
 			SDL_Texture* texture_perdu = loadText(rendu, "Perdu !", Rouge, font);
 			SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
@@ -765,7 +714,6 @@ void menu_load(SDL_Renderer* rendu) {
 	Bs4();
 	Bmenu();
 	SDL_RenderPresent(rendu);
-	
 
 	bool continuer = true;
 	SDL_Event event;
@@ -776,6 +724,7 @@ void menu_load(SDL_Renderer* rendu) {
 		{
 		case SDL_QUIT:
 			continuer = false;
+			destroySDL();
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
@@ -837,7 +786,6 @@ void menu_New(SDL_Renderer* rendu) {
 	Bmenu();
 	SDL_RenderPresent(rendu);
 
-
 	bool continuer = true;
 	SDL_Event event;
 	while (continuer)
@@ -847,6 +795,7 @@ void menu_New(SDL_Renderer* rendu) {
 		{
 		case SDL_QUIT:
 			continuer = false;
+			destroySDL();
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
@@ -912,12 +861,12 @@ void menu_choose_LoadorNew(SDL_Renderer* rendu) {
 		{
 		case SDL_QUIT:
 			continuer = false;
+			destroySDL();
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				if (event.button.x > New.x&& event.button.x<New.x + New.w && event.button.y>New.y&& event.button.y < New.y + New.h)
 				{
-
 					SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
 					SDL_RenderClear(rendu);
 					menu_New(rendu);
@@ -941,7 +890,6 @@ void menu_choose_LoadorNew(SDL_Renderer* rendu) {
 			}
 		}
 	}
-	
 }
 
 void menu() {
@@ -953,13 +901,6 @@ void menu() {
 		switch (event_menu.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
 			destroySDL();
 			break;
 
@@ -999,7 +940,6 @@ void menu() {
 }
 
 Noeud faire_noeud(Article* a, int x, int y) {
-
 	Noeud N;
 	N.article = a;
 	N.x = /*en fonction de la distance au début*/x;
@@ -1009,7 +949,6 @@ Noeud faire_noeud(Article* a, int x, int y) {
 }
 
 Arete faire_Arrete(Noeud Origine, Noeud Destination) {
-
 	Arete A;
 	A.destination = &Destination;
 	A.origine = &Origine;
@@ -1018,7 +957,6 @@ Arete faire_Arrete(Noeud Origine, Noeud Destination) {
 }
 
 void dessine_noeud(Noeud N) {
-
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 20);
 
@@ -1041,7 +979,6 @@ void dessine_noeud(Noeud N) {
 }
 
 void dessine_arrete(Arete a) {
-
 	dessine_noeud(*(a.destination));
 	dessine_noeud(*(a.origine)); //peut être supprimé
 	SDL_RenderDrawLine(rendu, a.destination->x, a.destination->y + (H / 2), a.origine->x + L, (a.origine)->y + (H / 2));
@@ -1079,13 +1016,7 @@ void dessine_graph() {
 		switch (event_menu.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
+
 			destroySDL();
 			break;
 
@@ -1101,11 +1032,9 @@ void dessine_graph() {
 			}
 		}
 	}
-
 }
 
 void dessine_mini_noeud(Noeud N) {
-
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 20);
 
@@ -1121,10 +1050,8 @@ void dessine_mini_noeud(Noeud N) {
 	SDL_RenderCopy(rendu, NULL, NULL, &Rect);
 
 	SDL_RenderPresent(rendu);
-
 }
 void tabbienx() {
-
 	int cmp = 0;
 	for (int i = 1; i < 350; i++) { // Le noeud de départ
 		int IdArrivee = tabarticle[i].id;
@@ -1148,33 +1075,23 @@ void tabbienx() {
 }
 
 void tabbieny() {
-
 	int compt = 0;
 
 	for (int i = 0; i < 350; i++) {
-
 		tabjoliy[i] = 9999999999999999;
-
 	}
 
 	for (int i = 0; i < 350; i++) {
-
 		compt = 0;
 
 		for (int j = 0; j < 350; j++) {
-
 			if (tabjolix[i] == tabjolix[j]) {
-
 				compt++;
-
 			}
-
 		}
 
 		tabjoliy[i] = compt;
-
 	}
-
 }
 
 void dessine_bien() {
@@ -1183,38 +1100,29 @@ void dessine_bien() {
 	tabbienx();
 	tabbieny();
 
-
 	Noeud Tabchiant[350];
 
 	int i = 0;
 	int compt = 0;
 
 	while (i < 350) {
-
 		for (int j = 0; j < tabjoliy[compt]; j++) {
-
 			Tabchiant[i].x = tabjolix[i];
 			Tabchiant[i].y = tabjoliy[i];
 			i++;
-
 		}
 
 		compt++;
-
 	}
 
 	for (int i = 0; i < 350; i++) {
-
 		cout << i + 1 << "\t" << tabjolix[i] << "\t" << tabjoliy[i] << endl;
-
 	}
 
 	for (int i = 0; i < 350; i++) {
-
 		for (int j = Tabchiant[i].y; j > -Tabchiant[i].y; j = j - 2) {
 			dessine_mini_noeud(faire_noeud(NULL, ((Tabchiant[i].x) * 11) + 50, ((j) * 15) + HAUTEUR / 2));
 		}
-
 	}
 	SDL_RenderPresent(rendu);
 
@@ -1226,13 +1134,7 @@ void dessine_bien() {
 		switch (event_menu.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
+
 			destroySDL();
 			break;
 
@@ -1248,27 +1150,19 @@ void dessine_bien() {
 			}
 		}
 	}
-
 }
 
-
 void exportHTML() {
-
-
 	char tmp[21];
 
 	//system("mkdir \\iutbg-smbetu.univ-lyon1.fr\homes\Documents\Init algo\Semaine spé\LDVELH\LDVELH\Article"); //création dossier Article
-
 
 	for (int i = 1; i <= NBARTICLE; i++)						//création et remplissage des articles dans le dossier article
 	{
 		snprintf(tmp, sizeof(tmp), "Article/page%d", i);		//concatenation Article/pagei
 		strcat_s(tmp, ".html");									//concatenation de Article/pagei.html
 
-
-
 		ofstream pages(tmp);									//création de i pages (pagei.html)
-
 
 		//Début HTML sans CSS(pour l'instant) Article
 		pages << "<!Doctype html>" << endl;
@@ -1298,9 +1192,7 @@ void exportHTML() {
 			pages << "</div>" << endl;
 			pages << "</body>" << endl;
 			pages << "</html>" << endl;
-
 		}
-
 
 		pages.close();  //fermeture de l'écriture
 
@@ -1309,7 +1201,6 @@ void exportHTML() {
 }
 
 char* saisie_texte(SDL_Rect rectangle) {
-
 	SDL_Color noir = { 0, 0, 0 };
 
 	SDL_Rect saisir_lien;
@@ -1363,13 +1254,7 @@ char* saisie_texte(SDL_Rect rectangle) {
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
+
 			destroySDL();
 			break;
 
@@ -1460,11 +1345,9 @@ char* saisie_texte(SDL_Rect rectangle) {
 			}
 		}
 	}
-
 }
 
 void menu_edition() {
-
 	fond_ecran();
 
 	saisie_titre();
@@ -1476,11 +1359,9 @@ void menu_edition() {
 		fond_ecran();
 		un_autre_article = choix_autre_article();
 	}
-
 }
 
 void saisie_titre() {
-
 	SDL_Rect saisir_titre;
 	SDL_Color noir = { 0, 0, 0 };
 	SDL_Texture* texture_saisir_titre = loadText(rendu, "Saisissez le titre de votre livre :", noir, petite_font);
@@ -1508,11 +1389,9 @@ void saisie_titre() {
 	strcat_s(titre_export, strlen(titre_editer) + 5, ".txt");
 	titre_export[strlen(titre_editer) + 5 - 1] = '\0';
 	ofstream export_edit(titre_export, ios::out);
-
 }
 
 void saisie_article() {
-
 	SDL_Rect saisir_article;
 	SDL_Color noir = { 0, 0, 0 };
 	SDL_Texture* texture_saisir_article = loadText(rendu, "Saisissez votre article :", noir, petite_font);
@@ -1583,13 +1462,7 @@ void saisie_article() {
 		switch (event_lien.type)
 		{
 		case SDL_QUIT:
-			for (int i = 0; i < NBARTICLE; i++) {
-				for (int j = 0; j < tabarticle[i].nbLiens; j++) {
-					delete[] tabarticle[i].tLiens[j].texte;
-				}
-				delete[] tabarticle[i].tLiens;
-			}
-			delete[] tabarticle;
+
 			destroySDL();
 			menu_lien = false;
 			break;
@@ -1615,15 +1488,12 @@ void saisie_article() {
 			}
 			break;
 		}
-
 	}
 
 	cout << article_editer;
-
 }
 
 void saisie_liens(int i) {
-
 	//i est nbLien
 
 	fond_ecran();
@@ -1673,11 +1543,9 @@ void saisie_liens(int i) {
 		dest_lien[i] = atoi(saisie_texte(champ_saisir_lien_dest));
 		fond_ecran();
 	}
-
 }
 
 bool choix_autre_article() {
-
 	SDL_Color c = { 0,0,0 };
 	TTF_Font* font_tmp = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 40);
 	SDL_Texture* texture1 = loadText(rendu, "Oui", c, petite_font);
@@ -1715,6 +1583,7 @@ bool choix_autre_article() {
 		{
 		case SDL_QUIT:
 			continuer = false;
+			destroySDL();
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
@@ -1732,11 +1601,9 @@ bool choix_autre_article() {
 		}
 	}
 	TTF_CloseFont(font_tmp);
-
 }
 
 int main(int argn, char* argv[]) {
-
 	importer();
 	//exportHTML();
 
@@ -1752,5 +1619,13 @@ int main(int argn, char* argv[]) {
 	a[5] = '\0';
 	cout << a << endl;*/
 
+	for (int i = 0; i < NBARTICLE; i++) {
+		for (int j = 0; j < tabarticle[i].nbLiens; j++) {
+			delete[] tabarticle[i].tLiens[j].texte;
+		}
+		delete[] tabarticle[i].tLiens;
+	}
+	delete[] tabarticle;
+	destroySDL();
 	return 0;
 }
