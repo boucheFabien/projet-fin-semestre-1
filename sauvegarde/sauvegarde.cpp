@@ -642,18 +642,76 @@ void jouer() {
 		}
 		else {
 			fond_ecran();
+			Bmenu();
+			Bgraph();
+			if (tabarticle[CURRENT_ARTICLE].id == 350) {
+				SDL_Rect Perdu;
+				Perdu.x = LARGEUR / 3;
+				Perdu.y = HAUTEUR / 2 - 100;
+				SDL_Color Rouge = { 255, 255, 0 };
+				SDL_Texture* texture_perdu = loadText(rendu, "GAGNER !", Rouge, font);
+				SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
+				SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
+				SDL_DestroyTexture(texture_perdu);
+				SDL_RenderPresent(rendu);
+				CURRENT_ARTICLE = -1;
+				SDL_Delay(2000);
+			}
+			else {
+				SDL_Rect Perdu;
+				Perdu.x = LARGEUR / 3;
+				Perdu.y = HAUTEUR / 2 - 100;
+				SDL_Color Rouge = { 255, 0, 0 };
+				SDL_Texture* texture_perdu = loadText(rendu, "Perdu !", Rouge, font);
+				SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
+				SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
+				SDL_DestroyTexture(texture_perdu);
+				SDL_RenderPresent(rendu);
+				CURRENT_ARTICLE = -1;
+				SDL_Delay(2000);
+			}
+			bool continuer = true;
+			SDL_Event event;
 
-			SDL_Rect Perdu;
-			Perdu.x = LARGEUR / 3;
-			Perdu.y = HAUTEUR / 2 - 100;
-			SDL_Color Rouge = { 255, 0, 0 };
-			SDL_Texture* texture_perdu = loadText(rendu, "Perdu !", Rouge, font);
-			SDL_QueryTexture(texture_perdu, NULL, NULL, &Perdu.w, &Perdu.h);
-			SDL_RenderCopy(rendu, texture_perdu, NULL, &Perdu);
-			SDL_DestroyTexture(texture_perdu);
-			SDL_RenderPresent(rendu);
-			CURRENT_ARTICLE = -1;
-			SDL_Delay(2000);
+			while (continuer) {
+				SDL_WaitEvent(&event);
+
+				switch (event.type)
+				{
+				case SDL_QUIT:
+					continuer = false;
+					destroySDL();
+					break;
+
+				case SDL_MOUSEBUTTONDOWN:
+					if (event.button.button == SDL_BUTTON_LEFT) {
+						if (event.button.x > MenuB.x&& event.button.x<MenuB.x + MenuB.w && event.button.y>MenuB.y&& event.button.y < MenuB.y + MenuB.h)
+						{
+							SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+							SDL_RenderClear(rendu);
+							afficherMenu();
+							menu();
+							break;
+						}
+						if (event.button.x > GraphB.x&& event.button.x<GraphB.x + GraphB.w && event.button.y>GraphB.y&& event.button.y < GraphB.y + GraphB.h)
+						{
+							SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
+							SDL_RenderClear(rendu);
+							menu_graph();
+							break;
+						}
+						for (int i = 0; i < tabarticle[CURRENT_ARTICLE].nbLiens; i++) {
+							if (event.button.x > 50 && event.button.x < LARGEUR - 200 && event.button.y > HAUTEUR - 100 && event.button.y < (HAUTEUR - 100) + 20 * i + 20) {
+								CURRENT_ARTICLE = tabarticle[CURRENT_ARTICLE].tLiens[i].destination - 1;
+								save_chemin(tabarticle[CURRENT_ARTICLE]);
+								export_save(CURRENT_ARTICLE, ACTUAL_SAVE);
+								continuer = false;
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
