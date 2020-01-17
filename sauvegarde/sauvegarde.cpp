@@ -31,7 +31,6 @@ int initSDL() {
 	TTF_Init();
 
 	font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 100);
-	bouton_menu_font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 50);
 	petite_font = TTF_OpenFont("C:\\Windows\\Fonts\\calibri.ttf", 25);
 
 
@@ -57,10 +56,6 @@ void destroySDL() {
 	SDL_DestroyRenderer(rendu);
 	SDL_DestroyWindow(win);
 	TTF_CloseFont(font);
-	TTF_CloseFont(bouton_menu_font);
-	TTF_CloseFont(petite_font);
-	TTF_Quit();
-	SDL_Quit();
 
 }
 
@@ -652,14 +647,14 @@ void jouer() {
 				switch (event.type)
 				{
 				case SDL_QUIT:
-					for (int i = 0; i < NBARTICLE; i++) {
+					/*for (int i = 0; i < NBARTICLE; i++) {
 						for (int j = 0; j < tabarticle[i].nbLiens; j++) {
 							delete[] tabarticle[i].tLiens[j].texte;
 						}
 						delete[] tabarticle[i].tLiens;
 					}
 					delete[] tabarticle;
-					delete[] chemin;
+					delete[] chemin;*/
 					continuer = false;
 					destroySDL();
 					break;
@@ -697,8 +692,7 @@ void jouer() {
 			}
 		}
 		else {
-			SDL_SetRenderDrawColor(rendu, 198, 138, 94, 255);
-			SDL_RenderClear(rendu);
+			fond_ecran();
 
 			SDL_Rect Perdu;
 			Perdu.x = 0;
