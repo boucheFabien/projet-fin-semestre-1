@@ -5,6 +5,7 @@ const int HAUTEUR = 1000;
 const int H = 30;
 const int L = 50;
 
+
 SDL_Renderer* rendu;
 SDL_Window* win;
 TTF_Font* font;
@@ -57,7 +58,14 @@ void dessine_noeud(Noeud N);
 void dessine_arrete(Arete a);
 void dessine_graph();
 void menu_graph();
-void dessine_graph_complet();
+void dessine_mini_noeud(Noeud N);
+void dessine_bien();
+void tabbienx();
+void tabbieny();
 void exportHTML();
-void saisie_texte(SDL_Rect rectangle);
+char* saisie_texte(SDL_Rect rectangle);
 void menu_edition();
+void saisie_titre();
+void saisie_article();
+void saisie_liens(int i);
+bool choix_autre_article();
